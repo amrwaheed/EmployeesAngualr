@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { EmployeesService } from 'src/app/_services/employees.service';
 import { Employees } from 'src/app/_modules/employees';
 
+import { ToastrService } from 'ngx-toastr';
+ 
 @Component({
   selector: 'app-emoployees',
   templateUrl: './emoployees.component.html',
@@ -9,14 +11,15 @@ import { Employees } from 'src/app/_modules/employees';
 })
 export class EmoployeesComponent implements OnInit {
   private employees :Employees [] =[]
-  isLoading:boolean = true;
+  isLoading:boolean = false;
 
   constructor(
-    private emoployeesService: EmployeesService
+    private emoployeesService: EmployeesService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
-
+    this.isLoading = true
     this.emoployeesService.get_all_employees()
       .subscribe(
         data =>{
@@ -30,5 +33,6 @@ export class EmoployeesComponent implements OnInit {
 
   onDelete(id:number){
    this.emoployeesService.delete_employee(id)
+   this.toastr.error('Delete Row Successfully!', 'Delete');
   }
 }

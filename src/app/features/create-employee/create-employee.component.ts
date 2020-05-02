@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { EmployeesService } from 'src/app/_services/employees.service';
 import { Employees } from 'src/app/_modules/employees';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-employee',
@@ -16,7 +17,8 @@ export class CreateEmployeeComponent implements OnInit {
 
   constructor(
     public route: ActivatedRoute,
-    private employeeServices:EmployeesService
+    private employeeServices:EmployeesService,
+    private toastr: ToastrService
   ) { }
 
 
@@ -25,7 +27,7 @@ export class CreateEmployeeComponent implements OnInit {
       'id' : new FormControl(null ),
       'name' : new FormControl(null, { validators:[ Validators.required, Validators.minLength(3) ] } ),
       'email' : new FormControl(null, { validators: [ Validators.required, Validators.email  ] }),
-      'phone' : new FormControl(null, { validators: [ Validators.required, Validators.minLength(11),Validators.maxLength(14) ] }),
+      'phone' : new FormControl(null, { validators: [ Validators.required, Validators.minLength(11),Validators.maxLength(14) ,Validators.pattern("^((\\+91-?)|0)?[0-9]{11,14}$") ] }),
       'password' : new FormControl(null, { validators: [ Validators.required ,  Validators.minLength(8) ] }),
       "imageUrl" : new FormControl(null , {validators: [ Validators.required ]})
     });
@@ -88,10 +90,13 @@ export class CreateEmployeeComponent implements OnInit {
       this.form.value.imageUrl = `https://i.picsum.photos/id/${random}/200/200.jpg`;
 
         this.employeeServices.create_new_employee(this.form.value)
+        this.toastr.success('Employee Added Successfully', 'Add Employee');
+
     }else{
 
       this.employeeServices.update_employee(this.form.value)
-    
+      this.toastr.success('Employee Updated Successfully', 'Update Employee');
+
     }
     this.form.reset();
   }
